@@ -5,10 +5,17 @@ import java.io.IOException;
 /**
    メインクラス
  */
+// Todo improve code for argument
 public class SinglePlay {
     public static void main( String[] args ) throws IOException {
         Player you;
-        Player they = new RandomPlayer(true);
+        Player they = null;
+        try{
+            they = new RemotePlayer(args[0], Integer.parseInt(args[1]));
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         if ( args.length > 0 
              && (args[0].charAt(0) == 'r' || args[0].charAt(0) == 'R') ) {
             you = new RandomPlayer(true);
