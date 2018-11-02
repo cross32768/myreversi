@@ -11,7 +11,7 @@
     <jar destfile="${project}.jar" 
          basedir="${build.dst}">
       <manifest>
-        <attribute name="Main-Class" value="jp.ac.tohoku.ecei.sf.SinglePlay"/>
+        <attribute name="Main-Class" value="jp.ac.tohoku.ecei.sf.MultiPlay"/>
       </manifest>
     </jar>
   </target>

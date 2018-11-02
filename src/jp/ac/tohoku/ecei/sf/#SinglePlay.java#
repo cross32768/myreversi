@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 // Todo improve code for argument
 public class SinglePlay {
-	public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws IOException {
         Player you;
         Player they = null;
         try{
