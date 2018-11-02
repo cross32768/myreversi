@@ -19,21 +19,31 @@ public class ServerSingle implements Closeable {
     }
 
     protected void interact(InputStream is, OutputStream os){
+		int b;
         byte[] buf = new byte[4];
+	    byte[] end = "\r\n".getBytes(StandardCharsets.UTF_8);
         ReversiBoard board = null;
         int color = -1;
         Move mv = null;
         
         try{
             while(true){
-                is.skip(5);
+				for (int i = 0;i < 5;i++){
+					b = is.read();
+				}
+				
                 board = new ReversiBoard(is);
-                
-                is.read(buf, 0, 4);
+				
+                for (int i = 0;i < 4;i++){
+					b = is.read();
+					buf[i] = (byte) b;
+				}
                 color = board.byte2Color(buf[1]);
 
                 mv = player.play(board, color);
                 mv.writeTo(os);
+				os.write(end);
+				os.flush();
             }
         }
         catch(IOException e){

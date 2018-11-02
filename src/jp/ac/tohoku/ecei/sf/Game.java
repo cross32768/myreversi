@@ -26,7 +26,7 @@ public class Game {
 
         while ( !board.isEndGame() ) {
             if ( board.isPlayable( c ) ) {
-                try { 
+                try {
                     Move m = q1.play( board, c );
                     board.move( m, c );
                 } 

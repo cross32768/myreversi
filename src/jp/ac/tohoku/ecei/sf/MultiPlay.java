@@ -31,7 +31,7 @@ public class MultiPlay{
 
 		try{
 			they = new RemotePlayer(host, port);
-			you = new HumanPlayer();
+			you = new HumanPlayer();		
 
 			ReversiBoard b;
 			boolean isYourColorBlack = Math.random() < 0.5;

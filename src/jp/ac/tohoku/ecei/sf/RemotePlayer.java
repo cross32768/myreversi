@@ -48,7 +48,8 @@ public class RemotePlayer implements Player, Closeable {
             os.flush();
 
             mv = new Move(is);
-            is.skip(2);
+
+			is.skip(2);
         }
         catch (IOException e){
             e.printStackTrace();
