@@ -8,18 +8,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-/*
-  implements remote player
-  this player ask server how to play
-*/
+
 public class RemotePlayer implements Player, Closeable {
     private final Socket sock;
     private final InputStream is;
     private final OutputStream os;
-  
-    /*
-      constructer connects specified host and port
-    */
+
     public RemotePlayer(String host, int port) throws Exception {
         this(new Socket(host, port));
     }
@@ -30,21 +24,23 @@ public class RemotePlayer implements Player, Closeable {
         this.os = sock.getOutputStream();
     }
 
-    /*
-      this method send state of board and color to server
-      and get next move
-    */
+	public void quit() throws IOException{
+		byte [] cmd = "QUIT\r\n".getBytes(StandardCharsets.UTF_8);
+		os.write(cmd);
+		os.flush();
+	}
+
     public Move play(ReversiBoard board, int color){
         byte [] cmd = "MOVE ".getBytes(StandardCharsets.UTF_8);
         byte [] color_and_end = " C\r\n".getBytes(StandardCharsets.UTF_8);
         Move mv = null;
 
         try {
-            this.os.write(cmd);
+            os.write(cmd);
             board.writeTo(os);
 
             color_and_end[1] = board.color2Byte(color);
-            this.os.write(color_and_end);
+            os.write(color_and_end);
             os.flush();
 
             mv = new Move(is);
@@ -61,6 +57,12 @@ public class RemotePlayer implements Player, Closeable {
     }
                        
     public void close() throws IOException{
-        sock.close();
+		try{
+			quit();
+			sock.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
     }
 }

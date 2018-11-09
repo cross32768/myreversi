@@ -1,6 +1,5 @@
 package jp.ac.tohoku.ecei.sf;
 
-import java.util.*;
 import java.net.*;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,31 +18,46 @@ public class ServerSingle implements Closeable {
     }
 
     protected void interact(InputStream is, OutputStream os){
-		int b;
-        byte[] buf = new byte[4];
-	    byte[] end = "\r\n".getBytes(StandardCharsets.UTF_8);
-        ReversiBoard board = null;
-        int color = -1;
-        Move mv = null;
+        byte[] buf = new byte[5];
+		byte[] okcmd = "OK".getBytes(StandardCharsets.UTF_8);
+	    byte[] endcmd = "\r\n".getBytes(StandardCharsets.UTF_8);
         
         try{
             while(true){
 				for (int i = 0;i < 5;i++){
-					b = is.read();
-				}
-				
-                board = new ReversiBoard(is);
-				
-                for (int i = 0;i < 4;i++){
-					b = is.read();
+					int b = is.read();
 					buf[i] = (byte) b;
 				}
-                color = board.byte2Color(buf[1]);
 
-                mv = player.play(board, color);
-                mv.writeTo(os);
-				os.write(end);
-				os.flush();
+				String strbuf = new String(buf, StandardCharsets.UTF_8);
+				String cmd = strbuf.substring(0, 4);
+
+				if (cmd.equals("QUIT")){
+					return;
+				}
+
+				if (cmd.equals("MOVE")){
+					ReversiBoard board = new ReversiBoard(is);				
+					for (int i = 0;i < 4;i++){
+						int b = is.read();
+						buf[i] = (byte) b;
+					}
+					int color = board.byte2Color(buf[1]);
+
+					Move mv = player.play(board, color);
+					mv.writeTo(os);
+					os.write(endcmd);
+					os.flush();
+				}
+				else if (cmd.equals("NOOP")){
+					is.skip(1);
+					os.write(okcmd);
+					os.write(endcmd);
+					os.flush();
+				}
+				else {
+					throw new IOException(cmd + " is invalid command.");
+				}					
             }
         }
         catch(IOException e){
@@ -74,6 +88,7 @@ public class ServerSingle implements Closeable {
 
     public void close(){
         try{
+			System.out.println("Server is closed.");
             sock.close();
         }
         catch(Exception e){

@@ -16,6 +16,7 @@ public class MultiPlay{
 			s.close();
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			System.out.println("Starting server failed.");
 		}
 
@@ -25,13 +26,14 @@ public class MultiPlay{
 		catch (Exception e) {}
 	}
 
+	// change methods name
 	private static void startClient(String host, int port) {
 		Player you = null;
-		Player they = null;
+		RemotePlayer they = null;
 
 		try{
 			they = new RemotePlayer(host, port);
-			you = new HumanPlayer();		
+			you = new RandomPlayer();		
 
 			ReversiBoard b;
 			boolean isYourColorBlack = Math.random() < 0.5;
@@ -50,6 +52,8 @@ public class MultiPlay{
 			b.print();
 			
 			System.out.println( "You played " + (isYourColorBlack ? "black" : "white") + ".");
+
+			they.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
