@@ -8,10 +8,10 @@ public class MultiPlay{
 		return ("Usage: java -jar jikkenC-reversi.jar (client HOST PORT|server PORT)");
 	}
 
-	private static void startServer(int port, String servertype) {
-		Server s = null;
+	private static void startServer(int port) {
+		ServerSingle s = null;
 		try{
-			s = new Server(port, servertype);
+			s = new Server(port);
 			s.waitConnection();
 			s.close();
 		}
@@ -26,16 +26,17 @@ public class MultiPlay{
 		catch (Exception e) {}
 	}
 
+	// change methods name
 	private static void startClient_and_play_game(String host, int port, String playertype) {
 		Player you = null;
 		RemotePlayer they = null;
 
 		try{
 			they = new RemotePlayer(host, port);
-			if (playertype.equals("human")){
+			if (playertype == "human"){
 				you = new HumanPlayer();
 			}
-			else if (playertype.equals("random")){
+			else if (playertype == "random"){
 				you = new RandomPlayer();		
 			}
 			else {
@@ -73,9 +74,8 @@ public class MultiPlay{
 			System.out.println(usage());
 			return;
 		}
-		
-		if (args[0].equals("client")){
-			String clienttype = null;
+		if (args[0].startsWith("c")){
+			String playertype = null;
 			String host = null;
 			int    port = 0;
 
@@ -84,19 +84,22 @@ public class MultiPlay{
 				return;
 			}
 			if (args.length == 4){
-				if (args[1].equals("-h")){
-					clienttype = "human";
+				if (args[1] == "-h"){
+					playertype = "human";
 				    host = args[2];
 				    port = Integer.parseInt(args[3]);
 				}
 				else {
-					// usage for argument of client
-
+					System.out.println("error:" + args[1]);
+									String host = args[1];
+				int    port = Integer.parseInt(args[2]);
+				
+					// usage for argument
 					return;
 				}
 			}
 			else if(args.length == 3){
-			    clienttype = "random";
+			    playertype = "random";
 			    host = args[1];
 			    port = Integer.parseInt(args[2]);
 			}
@@ -104,39 +107,15 @@ public class MultiPlay{
 				System.out.println(usage());
 				return;
 			}
-			startClient_and_play_game(host, port, clienttype);
+			startClient_and_play_game(host, port, playertype);
 		}
-		else if(args[0].equals("server")){
-			String servertype = null;
-			int port = 0;
-			
+		else {
 			if (args.length < 2){
 				System.out.println(usage());
 			}
+			int port = Integer.parseInt(args[1]);
 
-			if (args.length == 3){
-				if (args[1].equals("-h")){
-						servertype = "human";
-						port = Integer.parseInt(args[2]);
-				}
-				else{
-					// usage for arcument of server
-				}	
-			}
-			else if (args.length == 2){
-				servertype = "random";
-				port = Integer.parseInt(args[1]);
-			}
-			else{
-				System.out.println(usage());
-				return;
-			}
-
-			startServer(port, servertype);
-		}
-		else{
-			System.out.println(usage());
-			return;
+			startServer(port);
 		}
 	}
 }
