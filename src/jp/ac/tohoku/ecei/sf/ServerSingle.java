@@ -9,12 +9,20 @@ import java.nio.charset.StandardCharsets;
 
 public class ServerSingle implements Closeable {
     private final ServerSocket sock;
-    private final RandomPlayer player;
+    private Player player = null;
 
-    public ServerSingle(int port) throws Exception{
+    public ServerSingle(int port, String playertype) throws Exception{
         this.sock = new ServerSocket(port);
         this.sock.setReuseAddress(true);
-        this.player = new RandomPlayer(true);
+		if (playertype.equals("human")){
+			this.player = new HumanPlayer();
+		}
+		else if(playertype.equals("random")){
+			this.player = new RandomPlayer(true);
+		}
+		else{
+			// raise error
+		}
     }
 
     protected void interact(InputStream is, OutputStream os){
